@@ -1,0 +1,145 @@
+
+ body { font-family: 'Roboto','Oxygen', sans-serif; font-size: 0.9em;  }
+ input:focus { background-color: #eee; border-color: #095C9E; }
+ th { text-align: right; padding: 0.8em; }
+ .container { text-align: center; width: 90%; margin: 5% auto; align-content: center;} 
+ ul { 
+   text-align: justify; 
+   list-style-type: none;
+   padding: 5px 20px 5px 0;
+  } 
+ .msg { width: 50%; margin: 0 auto; text-align: center; color: #095C9E;  border-top: 1px solid navy;  border-bottom: 1px solid navy;  } 
+  .navigation__list {
+    list-style-type:none;
+    display:flex;
+    justify-content:flex-start; 
+    width: 100%;
+   }
+
+   #navbar{
+      width: inherit;
+      background: #095C9E;
+      justify-content: flex-start;
+      align-items: flex-start;
+      font-weight: bold;
+      box-shadow:1px 1px 2px 0 rgba(0,0,0,0.75);
+   }
+
+   #logo{
+     width: 20%;
+     padding: 5%;
+     align-self: flex-start;
+   }
+
+   #main-content{
+      width: 90%;
+      justify-content: flex-start;
+      justify-content: center;
+   }
+
+   .navigation {
+        display:flex;
+        width: inherit;
+        padding:10px;
+        height: 50px;
+   }
+
+   .navigation__link {
+        transition:.3s ease;
+        display:block;
+        margin:15px;
+        font-size:1.3em;
+        text-decoration:none;
+        color: #095C9E;
+        padding-top: 20px;
+        padding-bottom: 20px;
+   }
+
+   caption{
+      font-size: 20px;
+   }
+
+   .navbutton {
+      background:none!important;
+      color:white;
+      border:none!important; 
+      padding:0!important;
+      font: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+
+    .standardbutton{
+      background:none!important;
+      color:#095C9E;
+      border:none!important; 
+      padding:0!important;
+      font: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .actionbutton{
+      background:none!important;
+      color: black;
+      border:none!important; 
+      padding:0!important;
+      font: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    a, a:hover, a:visited{
+      color: #095C9E;
+      text-decoration: none;
+    }
+
+    table{
+      width: 40%; 
+      margin: 0 auto;
+    }
+    td,th{
+      text-align: center;
+      color: rgb(12,12,12);
+    }
+
+    tr:nth-child(odd){
+      background-color: white;
+    }
+
+    tr:nth-child(even){
+      background-color: #9dc3e0;
+    }
+
+    .errMsg{
+      color: red;
+    }
+    textarea {
+      resize: none;
+    }
+
+    textarea:focus{
+      border-color: #095C9E; 
+    }
+
+    .clickableParagraph{
+      cursor: pointer;
+      color: rgb(12,12,12);
+    }
+
+    .internav{
+      display: flex; 
+      flex-direction: row; 
+      justify-content: center;
+      align-items: stretch;
+      height: 30px;
+      width: 100%;
+
+    }
+
+    .internav-item{
+      margin-right: 15px;
+    }
