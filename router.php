@@ -1,9 +1,11 @@
 <?php
     include_once('constants.php');
+    include_once('mvc/model/UserModel.php');
     session_start(); 
 
     final class Router{
-            static public function route($viewName){//rebuild this to param function
+            static public function route($viewName){
+                $systemUser = unserialize($_COOKIE["systemUser"]);
                 $userid = self::decodeUrl("userid");
                 $mode = self::decodeUrl("mode");
                 $viewtype = self::decodeUrl("viewtype");
@@ -20,7 +22,7 @@
                 if(file_exists($filename)){
                     include($filename);
                 }else{
-                    if($viewName == "/" || $viewName === NULL){
+                    if($viewName == "/" || $viewName == NULL){
                         include("wwwroot/html/main.html");
                     }else{
                         $filename = 'wwwroot/html/'.$viewName.".html";
@@ -38,6 +40,12 @@
                     return $retVal; 
                 }
                 return NULL;
+            }
+
+            static public function redirect($url){
+                ob_start();
+                header('Location: '.$url);
+                ob_end_flush();
             }
     }
 ?>

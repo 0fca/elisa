@@ -2,13 +2,15 @@
  body { font-family: 'Roboto','Oxygen', sans-serif; font-size: 0.9em;  }
  input:focus { background-color: #eee; border-color: #095C9E; }
  th { text-align: right; padding: 0.8em; }
- .container { text-align: center; width: 90%; margin: 5% auto; align-content: center;} 
+ .container { text-align: center; width: 90%; margin: 5% auto; align-content: center; align-items: center;} 
  ul { 
    text-align: justify; 
    list-style-type: none;
    padding: 5px 20px 5px 0;
   } 
- .msg { width: 50%; margin: 0 auto; text-align: center; color: #095C9E;  border-top: 1px solid navy;  border-bottom: 1px solid navy;  } 
+ .infMsg { width: 50%; margin: 0 auto; text-align: center; color: #095C9E;  border-top: 1px solid navy;  border-bottom: 1px solid navy;  } 
+ .errMsg { width: 50%; margin: 0 auto; text-align: center; color: #9e0b1f;  border-top: 1px solid navy;  border-bottom: 1px solid navy;  } 
+
   .navigation__list {
     list-style-type:none;
     display:flex;
@@ -18,9 +20,11 @@
 
    #navbar{
       width: inherit;
+      display: flex;
+      flex-direction: row;
       background: #095C9E;
       justify-content: flex-start;
-      align-items: flex-start;
+      align-content: flex-start;
       font-weight: bold;
       box-shadow:1px 1px 2px 0 rgba(0,0,0,0.75);
    }
@@ -39,7 +43,7 @@
 
    .navigation {
         display:flex;
-        width: inherit;
+        width: 100%;
         padding:10px;
         height: 50px;
    }
@@ -128,6 +132,7 @@
     .clickableParagraph{
       cursor: pointer;
       color: rgb(12,12,12);
+      margin-right: 15px;
     }
 
     .internav{
@@ -137,9 +142,55 @@
       align-items: stretch;
       height: 30px;
       width: 100%;
-
+      margin: 10px;
     }
 
-    .internav-item{
-      
+    .content-container {
+      margin: 0 auto;
+      width: 50%;
+      display: grid;
+      grid-template-columns: repeat(2, 3fr);
+      grid-gap: 5px;
+      grid-auto-rows: minmax(50px, auto);
+      grid-auto-columns: fit-content(50%);
     }
+
+    .leftCol1{
+      grid-column: 1;
+      grid-row: 1 ;
+    }
+
+    .leftCol2{
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .leftCol3{
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .rigthCol1{
+      align-items:stretch; 
+      align-content:stretch; 
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .rightCol2{
+      grid-column: 2;
+      grid-row: 2;
+    }
+    .rigthCol3{
+      align-items:stretch; 
+      align-content:stretch; 
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    .logout{
+      width: 50px;
+      align-self: flex-end !important;
+    }
+
+    

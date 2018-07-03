@@ -1,38 +1,26 @@
-<?php
-    final class UserModel{
-        private $name;
-        private $homeDir;
-        private $gid;
-        private $uid;
-        private $passwd;
+<?php 
+    class UserModel{
+        private $userName;
+        private $isAuthorized;
+        private $passwordHash;
 
-        public function __construct($name, $homeDir, $gid, $uid, $passwd){
-            $this->id = $id;
-            $this->name = $name;
-            $this->homeDir = $homeDir;
-            $this->gid = $gid;
-            $this->uid = $uid;
-            $this->passwd = $passwd;
+        public function __construct($userName, $passwordHash, $isAuthorized){
+            $this->userName = $userName;
+            $this->isAuthorized = $isAuthorized;
+            $this->passwordHash = $passwordHash;
         }
 
-        public function getName(){
-            return $this->name;
-        }    
-
-        public function getHomeDir(){
-            return $this->homeDir;
+        public function isAuthorized(){
+            return $this->isAuthorized;
         }
 
-        public function getGid(){
-            return $this->gid;
+        public function getUserName(){
+            return $this->userName;
         }
 
-        public function getUid(){
-            return $this->uid;
+        public function getPassHash(){
+            return $this->passwordHash;
         }
-
-        public function getPasswd(){
-            return $this->passwd;
-        }
+        
     }
 ?>

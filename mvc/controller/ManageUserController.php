@@ -1,4 +1,6 @@
 <?php
+    include_once('helper/DatabaseController.php');
+
     final class ManageUserController{
         static public function editUser($model){
 

@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css?family=Oxygen" rel="stylesheet"> 
     <link rel="icon" href="wwwroot/images/favicon-sml-blu.png">
-    <script src="wwwroot/js/script.js"></script>
+    <script src="wwwroot/js/main.js"></script>
 </head>
     
     <form method="get">
@@ -29,6 +29,7 @@
                         <button class="navbutton" type="submit" name="view" value="aboutView">O aplikacji</button>
                     </li>
                 </ul>
+                <button class="navbutton" type="submit" name="view" value="LoginView">Zaloguj</button>
             </nav>
             </div>
         </header>
@@ -37,7 +38,7 @@
 
     <?php
         include_once('router.php');
-
+        
         Router::route($_GET['view']);
     ?>
     </body>
