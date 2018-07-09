@@ -1,14 +1,16 @@
 <?php
     include_once('constants.php');
+    include_once('mvc/model/UserModel.php');
     session_start(); 
+    $_SESSION['errorCode'] = 404;
 
     final class Router{
-            static public function route($viewName){//rebuild this to param function
+            static public function route($viewName){
                 $userid = self::decodeUrl("userid");
                 $mode = self::decodeUrl("mode");
                 $viewtype = self::decodeUrl("viewtype");
 
-                $filename = 'mvc/view/'.$viewName.".php";
+                
                 if($userid != NULL){
                     $_SESSION['userid'] = $userid;
                 }
@@ -17,16 +19,7 @@
                     $_SESSION['mode'] = $mode;
                 }    
 
-                if(file_exists($filename)){
-                    include($filename);
-                }else{
-                    if($viewName == "/" || $viewName === NULL){
-                        include("wwwroot/html/main.html");
-                    }else{
-                        $filename = 'wwwroot/html/'.$viewName.".html";
-                        include($filename);
-                    }
-                }  
+                include(self::recognizeViewName($viewName));
             }  
 
             static private function decodeUrl($phrase){
@@ -38,6 +31,39 @@
                     return $retVal; 
                 }
                 return NULL;
+            }
+
+            static public function redirect($url){
+                ob_start();
+                header('Location: '.$url);
+                ob_end_flush();
+            }
+
+            static private function recognizeViewName($viewName){
+                $defaultNames = array();
+                $defaultNames["/"] = "main.html";
+                $defaultNames["index"] = "main.html";
+                $defaultNames["error"] = "error/".$_SESSION['errorCode'].".html";
+
+                $filename = 'mvc/view/'.$viewName.".php";
+                if($viewName == NULL){
+                    $viewName = "/";
+                }
+
+                if(file_exists($filename)){
+                    return $filename;
+                }else{
+                    if(array_key_exists($viewName,$defaultNames)){
+                        return "wwwroot/html/".$defaultNames[$viewName];
+                    }else{
+                        $filename = 'wwwroot/html/'.$viewName.".html";
+                        if(file_exists($filename)){
+                            return $filename;
+                        }else{
+                            return "wwwroot/html/error/404.html";
+                        }
+                    }
+                } 
             }
     }
 ?>
