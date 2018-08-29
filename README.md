@@ -27,7 +27,7 @@ I assume that you are fammiliar with bash and you are able to install php-7.0 pa
 * $ git clone https://github.com/Obsidiam/elisa/
 * $ sudo mkdir elisa
 * $ sudo mkdir {wwwroot}/elisa/data
-* $ sudo chown -R www-data:www-data {wwwroot}
+* $ sudo chown -R www-data:www-data {wwwroot}/elisa
 * $ sudo cp -r elisa {wwwroot}/elisa/*
 * $ sudo systemctl restart apache2
 * $ set enforce 0 - this is optional, but it may help if even with owned directories in {wwwroot}/data WWW Server will still have problems writing anything there.
