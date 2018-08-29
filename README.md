@@ -3,7 +3,7 @@ Elisa - simple FTP management panel
 
 Elisa is a simple FTP panel written in pure php, HTML 5, CSS 3 with Bootstrap CDN.
 
-# How it is built?
+# How is it built?
 
 Elisa was built basing on raw plain MVC architectonical pattern.
 There are no other patterns used.
