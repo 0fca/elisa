@@ -13,7 +13,7 @@ All utility classes are just final static classes and views are normal public cl
 
 I used php __7.0__ to built this code. I tested it primarly on CentOS 7 and Debian 9 using Apache 2.4 WWW Server.
 There is a need that u use proftpd server and it is configured to work with mysql server set up anywhere in the LAN.
-I tested Elisa with MariaDB 10.0. It is important to use it as well, because Oracle MySQL Server not always want to work properly.
+I tested Elisa with MariaDB 10.0. It is important to use it as well, because Oracle MySQL Server not always want to work in the same manner.
 
 # How to set up?
 
