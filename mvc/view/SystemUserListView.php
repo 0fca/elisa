@@ -17,19 +17,30 @@
             return $this->users;
         }
 
-        public function printContent(){
+        public function printTableContent(){
+            $content = "";
+            $index = 0;
+            foreach($this->users as $user){
+                $userName = explode(".auth",$user)[0];
+                $content .= "<tr>
+                <th scope='row'>$index</th>
+                <td>$userName</td>
+                <td>
+                  <a class='btn btn-primary' href='{$_SERVER['PHP_SELF']}?view=ManageSystemUserView&mode=edit&userid={$userName}'>Edytuj</a>";
+                  if($userName !== "admin"){
+                    $content .= "<a class='btn btn-danger' href='{$_SERVER['PHP_SELF']}?view=ManageSystemUserView&mode=delete&userid={$userName}'>Usuń</a>";
+                  }
+                $content .= "</td>
+              </tr>";
+              $index++;
+            }
+            return $content;
+        }
+        public function printOptionContent(){
             $content = "";
             foreach($this->users as $user){
-                $userName = explode(".",$user)[0];
-                $content .= "<tr>".
-                    "<td>".
-                        "<p>".$userName."</p>".
-                    "</td>".
-                    "<td>".
-                        "<button class='actionbutton' type='submit' formaction='/elisa/?view=ManageSystemUserView&mode=edit'>Edytuj</button>".
-                        "<button class='actionbutton' type='submit' formaction='/elisa/?view=ManageSystemUserView&mode=delete&userid=$userName'>Usuń</button>".
-                    "</td>".
-                "</tr>";
+                $userName = explode(".auth",$user)[0];
+                $content .= "<option>$userName</option>";
             }
             return $content;
         }
@@ -54,15 +65,17 @@
     if($systemUserModel !== NULL){
         if($systemUserModel->isAuthorized()){
             $userList = DatabaseController::listLocalUsers();
+            //var_dump($userList);
+            $systemUserListView = new SystemUserListView($userList);
         }else{
             $_SESSION['errorCode'] = 403;
-            Router::redirect("/elisa/?view=error");
+            Router::redirect("/?view=error");
         }
     }else{
-        Router::redirect("/elisa/?view=LoginView");
+        $_SESSION["returnUrl"] = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        Router::redirect("/?view=LoginView");
     }
 ?>
-<div class="container">
     <?php
         if($_SESSION['returnMessage'] !== NULL){
             if(!$_SESSION['isReturnError']){
@@ -73,29 +86,32 @@
             $_SESSION['returnMessage'] = NULL;
         }
     ?>
-    <div>
-
-    <form action="<?php print $_SERVER['PHP_SELF']; ?>" name="listForm" method="post">
-        <button class="actionbutton" type="submit" formaction="/elisa/?view=RegisterView">Dodaj nowego</button>
-        <table>
-            <caption>List użyszkodników systemu</caption>
-            <thead>
-                <th>
-                    Nazwa
-                </th>
-                <th>
-                    Opcje
-                </th>
+  <div class="row justify-content-center pt-5">
+    <div class="col-14 width-fit">
+      <div class="row pb-4">
+        <div class="col-12">
+          <h1 class="h2">Lista użytkowników systemowych</h1>
+          <a href="/?view=RegisterView" class="btn btn-success" type="submit">Dodaj nowego</a>
+        </div>
+      </div>
+      <div class="row width-fit">
+          <table class="table table-hover table-bordered text-center">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nazwa</th>
+                <th scope="col">Akcje</th>
+              </tr>
             </thead>
             <tbody>
                <?php
-               if($userList !== NULL){
-                    $userListView = new SystemUserListView($userList);
-                    echo $userListView->printContent();
-               }  
+                if($systemUserListView !== NULL){
+                    echo $systemUserListView->printTableContent(); 
+                }
                ?>
             </tbody>
-        </table>
-        </form>
+          </table>
+      </div>
     </div>
-</div>    
+  </div>
+    </div>

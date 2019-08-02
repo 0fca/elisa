@@ -9,44 +9,37 @@
     if($systemUser !== NULL){
       $systemUser = NULL;
       setcookie('userHash', NULL);
-      Router::redirect('/elisa');
+      $_SESSION["returnUrl"] = NULL;
+      Router::redirect('/');
     }
-?>
-<!DOCTYPE html>
+?>   
+    <div class="row">    
 
-<html>
-<head>
-    <meta charset="UTF-8"/>
-    <title>Panel administratora</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
-    <link href="https://fonts.googleapis.com/css?family=Oxygen" rel="stylesheet"> 
-    <link rel="icon" href="data/favicon-sml-blu.png">
-    <script src="js/script.js"></script>
-</head>
-<body>    
-<div class="container">
-    <form name="authUserForm" method="post">
-        
-    <table>
-    <caption>Logowanie do sekcji administracyjnej!</caption>
-    <tr><th>Login:</th><td><input name="username" type="text" size="20" autocomplete="off" /></td></tr>
-    <tr><th>Hasło:</th><td><input name="password" size="20" type="password" /></td></tr>
-    <tr>
-      <td colspan="2" style="text-align: center;" >
-        <button class="actionbutton" name="submitted" type="submit" >OK</button>
-      </td>
-    </tr>
-  </table>
-</form>
+      <section style="width: 100%;">
+      <form name="authUserForm" method="post">
+        <h3>Logowanie do sekcji administracyjnej</h3>
+        <div class="form-group">
+          <label for="username">Login</label>
+          <input type="text" id = "username" name="username"></input>
+        </div>
+        <div class="form-group">
+          <label for="password">Hasło</label>
+          <input type="password" id="password" name="password"></input>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-success" name="submitted">OK</button>
+        </div>
+      </section>
+      </form>
+  </div>
           <div class="infoMsg">
           <?php
             if (isset($_POST["submitted"])) {
               $passHash = hash("sha1", $_POST['password']);
               $result = AuthController::authorize($passHash, $_POST['username']);
               $model =  $result["model"];
-              
-              if($model !== NULL){
+
+              if($model !== NULL && $result["result"]){
                 $stringified = serialize($model);
                 $userHash = hash("sha1", $stringified);
                 $cookie_xpire = cookie_xpire;
@@ -56,14 +49,12 @@
                   setcookie("userHash", $userHash);
                 }
                 
-
-                Router::redirect("/elisa?view=FtpUserListView");
+                //var_dump($_SESSION['returnUrl']);
+                $url = $_SESSION['returnUrl'] !== NULL ? $_SESSION['returnUrl'] :  $_SERVER['PHP_SELF'];
+                Router::redirect($url);
               }else{
                 echo "<p style='color: red;'>".$result["message"]."</p>"; 
               }
             } 
           ?>
           </div>
-</div>
-</body>
-</html>

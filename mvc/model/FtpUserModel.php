@@ -5,6 +5,8 @@
         private $gid;
         private $uid;
         private $passwd;
+        private $rawPass;
+	private $quota;
 
         public function __construct(){
             
@@ -30,6 +32,14 @@
             return $this->passwd;
         }
 
+        public function getRawPassword(){
+            return $this->rawPass;
+        }
+	
+	public function getQuota(){
+		return $this->quota;
+	}
+
         public function setName($name){
             $this->name = $name;
         }
@@ -49,5 +59,13 @@
         public function setHomeDir($homeDir){
             $this->homeDir = $homeDir;
         }
+
+        public function setRawPassword($rawPassword){
+            $this->rawPass = $rawPassword;
+        }
+
+	public function setQuota($quota){
+		$this->quota = $quota;
+	}
     }
 ?>

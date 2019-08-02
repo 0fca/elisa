@@ -1,8 +1,21 @@
 <?php
-    define("adm_usr_name","testftp");
-    define("adm_usr_pass","testftp");
-    define("db_name","ftp");
-    define("server_addr","127.0.0.1");
-    define("ftpHomeDirs","/ftp/users/");
-    define("cookie_xpire", NULL);
+    define("ftpHomeDirs","/fs/ftp.infinite.pl/idok/");
+    define("cookie_xpire", 60*10);
+    define("mailTo","dasi@infinite.pl");
+    define("mailFrom","ftp-panel-elisa");
+    define("subject","Elisa FTP Panel - critical error");
+
+    const dbNames = array(0 => "192.168.216.21;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          1 => "192.168.216.22;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          2 => "192.168.216.23;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          3 => "192.168.216.24;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          4 => "192.168.216.25;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          5 => "192.168.216.10;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          6 => "192.168.216.11;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          7 => "192.168.216.12;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          8 => "192.168.216.26;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          9 => "192.168.216.27;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          10 => "192.168.216.28;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          11 => "192.168.216.29;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
+                          12 => "192.168.216.30;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As");
 ?>

@@ -37,34 +37,34 @@
 
     $systemUserModel = AuthController::authorizeByHash($_COOKIE['userHash'])["model"];
     $id = $_SESSION['userid'];
+    $editedModel = NULL;
 
     if($systemUserModel !== NULL){
         if($systemUserModel->isAuthorized()){
             $userList = $_SESSION["usersList"];
         }else{
             $_SESSION['errorCode'] = 403;
-            Router::redirect("/elisa/?view=error");
+            Router::redirect("/?view=error");
         }
     }else{
-        Router::redirect("/elisa/?view=LoginView");
+        $_SESSION["returnUrl"] = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        Router::redirect("/?view=LoginView");
     }
     $mode = $_SESSION['mode'];
 
     if($id !== NULL){
         if($mode === 'edit' || $mode === 'delete'){
-            $model = new UserModel($id,"",false);
-            $systemUserView = new SystemUserView($model);
+            $editedModel = DatabaseController::getFromLocalDatabase($id);
+            $systemUserView = new SystemUserView($editModel);
         }else{
             $_SESSION['errorCode'] = 400;
-            Router::redirect("/elisa/?view=error");
+            Router::redirect("/?view=error");
         }
     }else{
-        Router::redirect("/elisa?view=SystemUserListView");
+        Router::redirect("/?view=SystemUserListView");
     }
 
 ?>
-<div class="container">
-
     <?php
         $message = $_SESSION["returnMessage"];
         $isErr = $_SESSION['isReturnError'];
@@ -78,7 +78,7 @@
             }
     
     ?>
-    <form method="post" action="/elisa/?view=SystemUserListView">
+    <form method="post">
     <?php 
     switch($mode){
         case "edit":
@@ -97,22 +97,44 @@
     ?>
     <?php 
     if($mode !== 'delete'){
+        if($mode == 'add'){
         echo "<div class='content-container'>
             <div class='leftCol1'>
-                <p>Nazwa użyszkodnika:</p>
+                <p>Nazwa użytkownika:</p>
             </div>
             <div class='leftCol2'>
                 <p>Hasło:</p>
             </div>
+            <div class='rightCol1'>
+                    <input id='nameField' name='nameField' placeholder='Nazwa'/>
+            </div>
             <div class='rightCol2'>
-                <input type='password' id='passwordField' name='passwordField' placeholder='Hasło'/>
+                    <input type='password' id='passwordField' name='passwordField' placeholder='Hasło'/>
             </div>
         </div>";
+        }
+
+        if($mode == 'edit'){
+            echo "<div class='content-container'>
+            <div class='leftCol1'>
+                <p>Nazwa użytkownika:</p>
+            </div>
+            <div class='leftCol2'>
+                <p>Hasło:</p>
+            </div>
+            <div class='rightCol1'>
+                    <input id='nameField' name='nameField' placeholder='Nazwa' value='{$id}'/>
+            </div>
+            <div class='rightCol2'>
+                    <input type='password' id='passwordField' name='passwordField' placeholder='Hasło' value='{$editedModel->getPassHash()}'/>
+            </div>
+            </div>";
+        }
     }
     ?>
         <span class="internav">
             <button type="submit" class="actionbutton" name="postData">OK</button>
-            <button type="cancel" class="actionbutton">Anuluj</button>
+            <a class="button-link" href="/?view=SystemUserListView">Anuluj</a>
         </span>
     </form>
     <?php
@@ -121,7 +143,12 @@
                 
                 switch($mode){
                     case 'edit':
-                        $userModel = new UserModel($_POST["nameField"], $_POST["passwordField"], false);
+                        $pass = $_POST['passwordField'];
+                        if($editedModel->getPassHash() !== $pass){
+                            $pass = hash("sha1",$_POST['passwordField']);
+                        }
+                        $userModel = new UserModel($_POST["nameField"], $pass, $editedModel->isAuthorized());
+                        ManageSystemUserController::editSystemUser($userModel, $id);
                         $_SESSION['isReturnErr'] = false;
                         $_SESSION['returnMessage'] = DB0;
                     break;
@@ -134,7 +161,15 @@
                 }catch(ManagementException $ex){
                     $_SESSION['isReturnErr'] = true;
                     $_SESSION['returnMessage'] = $ex->getMessage();
+                }finally{
+                    Router::redirect("/?view=SystemUserListView");
                 }
             }
     ?>
-</div>
+    <script>
+        document.getElementById("nameField").addEventListener("keydown",function(e){
+            if(e.keyCode == 8){
+                validateUserData();
+            }
+        });
+        </script>

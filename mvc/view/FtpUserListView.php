@@ -16,11 +16,30 @@
             return $this->users;
         }
 
-        public function printContent(){
+        public function printOptionContent(){
             $content = "";
             foreach($this->users as $user){
+                $userName = explode(".",$user)[0];
+                $content .= "<option>$userName</option>";
+            }
+            return $content;
+        }
+
+        public function printTableContent(){
+            $content = "";
+            if(sizeof($this->users) == 0){
+                return UserListView::printInfoMessage(DB0A);
+            }
+            $i = 0;
+            foreach($this->users as $user){
+                $lockOpt = "<a class='btn btn-primary' href='{$_SERVER['PHP_SELF']}?view=ManageFtpUserView&mode=edit&userid={$user->getName()}'>Edytuj</a>".
+                           "<a class='btn btn-danger' href='{$_SERVER['PHP_SELF']}?view=ManageFtpUserView&mode=lock&userid={$user->getName()}'>Zablokuj</a>";
+                if($user->getHomeDir() == "***BLOCKED***"){
+                    $lockOpt = "<a class='btn btn-success' href='{$_SERVER['PHP_SELF']}?view=ManageFtpUserView&mode=unlock&userid={$user->getName()}'>Odblokuj</a>";
+                }
 
                 $content .= "<tr>".
+                    "<th scope='row'>$i</th>".
                     "<td>".
                         "<p>".$user->getName()."</p>".
                     "</td>".
@@ -34,10 +53,13 @@
                         "<p>".$user->getGid()."</p>".
                     "</td>".
                     "<td>".
-                        "<button class='actionbutton' type='submit' value='edit' formaction='/elisa?view=ManageFtpUserView&mode=edit&userid={$user->getName()}'>Edytuj</button>".
-                        "<button class='actionbutton' type='submit' value='lock' formaction='/elisa?view=ManageFtpUserView&mode=lock&userid={$user->getName()}'>Zablokuj</button>".
+                        "<p>".$user->getQuota()."</p>".
+                    "</td>".
+                    "<td>".
+                        $lockOpt.
                     "</td>".
                 "</tr>";
+                $i++;
             }
             return $content;
         }
@@ -63,19 +85,22 @@
         if($systemUserModel->isAuthorized()){
             try{
                 $userList = ManageFtpUserController::listFtpUsers();
+                $systemUserListView = new UserListView($userList);
             }catch(ManagementException $ex){
                 $_SESSION['returnMessage'] = $ex->getMessage();
                 $_SESSION['isReturnError'] = true;
             }
         }else{
             $_SESSION['errorCode'] = 403;
-            Router::redirect("/elisa/?view=error");
+            Router::redirect("/?view=ManageFtpUserView&mode=add");
         }
     }else{
-        Router::redirect("/elisa/?view=LoginView");
+        $_SESSION["returnUrl"] = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        Router::redirect("/?view=LoginView");
     }
 ?>
-<div class="container">
+
+
     <?php
         $message = $_SESSION["returnMessage"];
         $isErr = $_SESSION['isReturnError'];
@@ -88,42 +113,49 @@
                 $_SESSION['returnMessage'] = NULL;
             }
     ?>
-    <span class="internav">
-        <p style="margin-right: 15px;">Wpisz szukaną frazę:</p>
-        <input type='search' id='searchField'/>
-    </span>
-    <br/>
-    <form action="<?php print $_SERVER['PHP_SELF']; ?>" name="listForm" method="post">
-        <div>
-            <button class="actionbutton" type="submit" formaction="/elisa/?view=ManageFtpUserView&mode=add">Dodaj nowego</button>
-        <table>
-            <caption>List użyszkodników serwera FTP</caption>
-            <thead>
-                <th>
-                    Nazwa
-                </th>
-                <th>
-                    Katalog domowy
-                </th>
-                <th>
-                    UID
-                </th>
-                <th>
-                    GID
-                </th>
-                <th>
-                    Opcje
-                </th>
+    
+<div class="row justify-content-center pt-5">
+    <div class="col-14 width-fit">
+      <div class="row pb-4">
+        <div class="col-12">
+          <h1 class="h2">Lista użytkowników systemowych</h1>
+          <a class="btn btn-success" href=<?php echo $_SERVER['PHP_SELF'] . "?view=ManageFtpUserView&mode=add";?>>Dodaj nowego</a>
+          <span class="internav">
+                <p style="margin-right: 15px;">Wpisz szukaną frazę:</p>
+                <input type='search' id='searchField' oninput="filter();"/>
+            </span>
+        </div>
+      </div>
+      <div class="row width-fit">
+          <table class="table table-hover table-bordered text-center">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nazwa</th>
+                <th scope="col">Katalog domowy</th>
+                <th scope="col">UID</th>
+                <th scope="col">GID</th>
+                <th scope="col">Quota (MB)</th>
+                <th scope="col">Akcje</th>
+              </tr>
             </thead>
             <tbody>
                <?php
-               if($userList !== NULL){
-                    $userListView = new UserListView($userList);
-                    echo $userListView->printContent();
-               }   
+                if($systemUserListView !== NULL){
+                    echo $systemUserListView->printTableContent(); 
+                }
                ?>
             </tbody>
-        </table>
-        </div>
-    </form>
-</div>    
+          </table>
+      </div>
+    </div>
+  </div>
+
+<script>
+    document.getElementById("searchField").addEventListener("keydown",function(e){
+        if(e.keyCode == 8){
+            console.log(e.keyCode);
+            filter();
+        }
+    });
+</script> 

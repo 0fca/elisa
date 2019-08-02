@@ -17,26 +17,27 @@
                 $authString = FilesystemHelper::readFile($username);
                 self::$systemUserModel = unserialize($authString);
                 $result["model"] = self::$systemUserModel;
-                $result["message"] = (self::$systemUserModel->getPassHash() == $password && self::$systemUserModel->getUserName() == $username) ? L0 : L100;
-                Logger::adminLog("User authorized successfully:{$username} ",Level::INFORMATION);
+                $result["message"] = (self::$systemUserModel->getPassHash() === $password) ? L0 : L100;
+                $result["result"] = self::$systemUserModel->getPassHash() === $password;
+                Logger::adminLog("User authorized successfully:{$username} ",Level::INFORMATION, get_called_class());
+                //$_SESSION["returnUrl"] = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             }
             return $result;
         }
         
-        static public function register($userModel){
+        static public function register($userModel){            
             self::$systemUserModel = $userModel;
-            //var_dump($userModel);
+            Logger::adminLog("Registering started.",Level::INFORMATION, get_called_class());
             try{
                 ManageSystemUserController::addSystemUser($userModel);
                 $username = $userModel->getUserName();
-                //Logger::adminLog("User registered successfully:{$username} ",Level::INFORMATION);
                 $_SESSION['returnMessage'] = DB0;
                 $_SESSION['isReturnError'] = false;
+                Logger::adminLog("User registered successfully:{$username} ",Level::INFORMATION, get_called_class());
             }catch(ManagementException $ex){
-                var_dump($ex);
                 $_SESSION['returnMessage'] = $ex->getMessage();
                 $_SESSION['isReturnError'] = true;
-                //Logger::adminLog("Couldn't register the user. ",Level::ERROR);
+                Logger::adminLog("Couldn't register the user.",Level::ERROR, get_called_class());
             }
         }
 
@@ -51,17 +52,22 @@
                 $hashTable = explode(';',file_get_contents("data/userHash.data"));
 
                 foreach($hashTable as $line){
-                    $name = explode(":", trim($line))[0];
-                    $hash2 = explode(":", trim($line))[1];
+                    $hashSplit = explode(":", trim($line));
+                    if(sizeof($hashSplit) == 2){
+                    $name = $hashSplit[0];
+                    $hash2 = $hashSplit[1];
 
-                    if($hash == $hash2){
+                    if($hash === $hash2){
                         $result["message"] = L0;
                         $authString = file_get_contents("data/".$name.".auth");
+                        Logger::adminLog($authString, Level::INFORMATION, get_called_class());
                         self::$systemUserModel = unserialize($authString);
+                        
                         $result["model"] = self::$systemUserModel;
                         $username = self::$systemUserModel->getUserName();
-                        Logger::adminLog("User authorized successfully:{$username} ",Level::INFORMATION);
+                        Logger::adminLog("User authorized successfully:{$username} ",Level::INFORMATION, get_called_class());
                         return $result;
+                    }
                     }
                 }    
             }else{

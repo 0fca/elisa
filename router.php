@@ -45,11 +45,11 @@
                 $defaultNames["index"] = "main.html";
                 $defaultNames["error"] = "error/".$_SESSION['errorCode'].".html";
 
-                $filename = 'mvc/view/'.$viewName.".php";
                 if($viewName == NULL){
-                    $viewName = "/";
+                    $viewName = "index";
                 }
 
+                $filename = 'mvc/view/'.$viewName.".php";
                 if(file_exists($filename)){
                     return $filename;
                 }else{
@@ -60,7 +60,10 @@
                         if(file_exists($filename)){
                             return $filename;
                         }else{
-                            return "wwwroot/html/error/404.html";
+                            if(date('j', time()) === '20'){
+                                self::redirect("https://en.wikipedia.org/wiki/Pika");
+                            }
+                            return "views/error/404.html";
                         }
                     }
                 } 

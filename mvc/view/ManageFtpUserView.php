@@ -3,7 +3,9 @@
     include_once('mvc/model/FtpUserModel.php');
     include_once('router.php');
     include_once('constants.php');
+    include_once('messages.php');
     include_once('mvc/controller/helper/AuthController.php');
+    include_once('mvc/controller/helper/PasswordGenerator.php');
 
     class ManageUserView{
         private $userModel;
@@ -32,36 +34,36 @@
     }
 
     $id = $_SESSION['userid'];
+    $mode = $_SESSION['mode'];
     $systemUserModel = AuthController::authorizeByHash($_COOKIE['userHash'])["model"];
     
     if($systemUserModel !== NULL){
         if($systemUserModel->isAuthorized()){
             $userList = $_SESSION["usersList"];
         }else{
-            //$_SESSION['errorCode'] = 403;
-            Router::redirect("/elisa/?view=ManageFtpUserView&mode=add");
+            $mode = "add";
         }
     }else{
-        Router::redirect("/elisa/?view=LoginView");
+        $_SESSION["returnUrl"] = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        Router::redirect("/?view=LoginView");
     }
     
-    if($id === NULL){
-        Router::redirect("/elisa?view=FtpUserListView");
+    if($id === NULL && ($mode == "edit" || $mode == "delete")){
+        Router::redirect("/?view=FtpUserListView");
     }else{
         $model = ManageFtpUserController::getUserById($id);
         $manageUserView = new ManageUserView($model);
     }
     
 ?>
-<div class="container">
     <?php
         $message = $_SESSION["returnMessage"];
         $isErr = $_SESSION['isReturnError'];
             if($message !== NULL){
                 if(!$isErr){
-                    echo UserListView::printInfoMessage($message);
+                    echo ManageUserView::printInfoMessage($message);
                 }else{
-                    echo UserListView::printErrorMessage($message);
+                    echo ManageUserView::printErrorMessage($message);
                 }
                 $_SESSION['returnMessage'] = NULL;
             }
@@ -83,44 +85,64 @@
         case "lock":
         echo "<h3>Zablokuj użytkownika FTP $id</h3>";
         break;
+        case "unlock":
+        echo "<h3>Odblokuj użytkownika FTP $id</h3>";
+        break;
     }
     ?>
 
     <form method="post">
         <?php
+            $ftpModel = $manageUserView->getUserModel();
             include("mvc/view/FtpPartView_{$mode}.php"); 
         ?>
     </form>
     <?php
         try{
             if (isset($_POST["postData"])) {
-                if($_POST['nameField'] !== NULL && $_POST['passwordField'] !== NULL && $_POST['homeDirField'] !== NULL){
-                $mode = $_SESSION['mode'];
+                if(($_POST['nameField'] !== NULL && $_POST['homeDirField'] !== NULL) || $mode == "lock" || $mode == "unlock"){
+                
                 switch($mode){
                     case 'edit':
-                        $ftpModel = $manageUserView->getUserModel();
                         $ftpModel->setName($_POST['nameField']);
-                        $ftpModel->setPassHash(hash("sha1",$_POST['passwordField']));
                         $ftpModel->setHomeDir($_POST['homeDirField']);
-                        $result = ManageFtpUserController::editFtpUser($ftpModel);
-
+                        $needsPassChange = $_POST["needsPassChange"] == "on" ? true : false;
+                        $ftpModel->setUid($_POST["uid"]);
+			$ftpModel->setQuota($_POST["quota"]);
+                        $resultModel = ManageFtpUserController::editFtpUser($ftpModel, $needsPassChange , $id);
+                        $ftpModel = $resultModel;
                         $_SESSION['returnMessage'] = ED0;
                         $_SESSION['isReturnError'] = false;
                     break;
                     case 'add':
+                        $password = PasswordGenerator::generatePassword(16);
                         $ftpModel = $manageUserView->getUserModel();
                         $ftpModel->setName($_POST['nameField']);
-                        $ftpModel->setPassHash(hash("sha1",$_POST['passwordField']));
+                        $ftpModel->setPassHash(hash("sha1",$password));
                         $ftpModel->setHomeDir($_POST['homeDirField']);
+			$ftpModel->setQuota($_POST["quota"]);
+                        $ftpModel->setRawPassword($password);
                         ManageFtpUserController::addFtpUser($ftpModel);
                         $_SESSION['returnMessage'] = A0;
                         $_SESSION['isReturnError'] = false;
                     break;
                     case 'lock':
-                        throw new UnsupportedOperationException("System aktualnie nie wspiera tej operacji.");
+                        ManageFtpUserController::lockFtpUser($id);
+                        $_SESSION['returnMessage'] = D0;
+                        $_SESSION['isReturnError'] = false;
+                    break;
+                    case 'unlock':
+                        ManageFtpUserController::unlockFtpUser($id);
+                        $_SESSION['returnMessage'] = D2;
+                        $_SESSION['isReturnError'] = false;
                     break;
                 }
-                Router::redirect("/elisa/?view=FtpUserListView");
+                if($mode == "add" || $mode == "edit"){
+                    $_SESSION["ftpAddResult"] = serialize($ftpModel);
+                    Router::redirect("/?view=FtpAddResultView");
+                }else{
+                    Router::redirect("/?view=FtpUserListView");
+                }
                 }else{
                     $_SESSION['returnMessage'] = E101;
                     $_SESSION['isReturnError'] = true;
@@ -129,6 +151,14 @@
         }catch(ManagementException $ex){
             $_SESSION['returnMessage'] = $ex->getMessage();
             $_SESSION['isReturnError'] = true;
+            Router::redirect("/?view=ManageFtpUserView");
         }
     ?>
-</div>
+    <div class="errMsg" id="errDiv" hidden>
+    <script>
+        document.getElementById("nameField").addEventListener("keydown",function(e){
+            if(e.keyCode == 8){
+                validateUserData();
+            }
+        });
+        </script>

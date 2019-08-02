@@ -1,8 +1,8 @@
 
- body { font-family: 'Roboto','Oxygen', sans-serif; font-size: 0.9em;  }
+ body { font-family: 'Roboto','Oxygen', sans-serif; font-size: 0.9em; align-content: center;}
  input:focus { background-color: #eee; border-color: #095C9E; }
  th { text-align: right; padding: 0.8em; }
- .container { text-align: center; width: 90%; margin: 8% auto; align-content: center; align-items: center;} 
+ .container { text-align: center; width: 100% !important; margin: 8% auto; align-content: center; align-items: center;}
  ul { 
    text-align: justify; 
    list-style-type: none;
@@ -17,25 +17,23 @@
     justify-content:flex-start; 
     width: 100%;
    }
-
-   #navbar{
-      margin-top: 8px;
-      width: 99%;
-      display: flex;
-      flex-direction: row;
-      background: #095C9E;
-      justify-content: flex-start;
-      align-content: flex-start;
-      font-weight: bold;
-      box-shadow:1px 1px 2px 0 rgba(0,0,0,0.75);
-      position: fixed; 
-      top: 0;
-   }
-
    #logo{
      width: 20%;
      padding: 5%;
      align-self: flex-start;
+   }
+
+   .bg-inf{
+     background-color: #095C9E;
+     box-shadow:1px 1px 2px 0 rgba(0,0,0,0.75);
+   }
+  
+   main{
+     margin-top: 60px;
+   }
+
+   .width-fit{
+     width: 100%;
    }
 
    #main-content{
@@ -45,10 +43,16 @@
    }
 
    .navigation {
-     display: flex;
-      width: inherit;
-      padding:10px;
+      display: flex;
+      width: 100%;
+      padding-left: 10px;
+      padding-right: 10px;
       height: 50px;
+      align-content: center;
+   }
+
+   .navpos{
+     padding-top: 10px;
    }
 
    .navigation__link {
@@ -66,9 +70,13 @@
       font-size: 20px;
    }
 
-   .navbutton {
+   a, a:hover, a:visited{
+    text-decoration: none;
+    }
+
+   .navbutton, .navbutton:hover, .navbutton:focus {
       background:none!important;
-      color:white;
+      color:white !important;
       border:none!important; 
       padding:0!important;
       font: inherit;
@@ -99,18 +107,19 @@
       margin-left: 5px;
     }
 
-    a, a:hover, a:visited{
-      color: #095C9E;
+    
+
+    .button-link{
+      color: black !important;
       text-decoration: none;
+      cursor: pointer;
+      margin-left: 5px !important;
+      padding-top: 8px !important;
     }
 
-    table{
-      width: 40%; 
-      margin: 0 auto;
-    }
-    td,th{
-      text-align: center;
-      color: rgb(12,12,12);
+    .table td,
+    .table th {
+      vertical-align: middle;
     }
 
     tr:nth-child(odd){
@@ -172,6 +181,10 @@
       grid-column: 1;
       grid-row: 3;
     }
+    .leftCol4{
+      grid-column: 1;
+      grid-row: 4;
+    }
 
     .rigthCol1{
       align-items:stretch; 
@@ -190,10 +203,50 @@
       grid-column: 2;
       grid-row: 3;
     }
+    .rigthCol4{
+      align-items:stretch; 
+      align-content:stretch; 
+      grid-column: 2;
+      grid-row: 4;
+    }
 
     .logout{
       width: 50px;
       align-self: flex-end !important;
     }
 
+    .userText{
+      font-size: 12px;
+      color: white;
+      text-align: right;
+      padding: 10!important;
+      text-decoration: none;
+      margin-right: 15px;
+    }
+ 
+    footer{
+      background: white;
+      text-align: center;
+      width: 100%; 
+      align-self: center;
+      color: #095C9E;
+      height: 28px;
+      position: fixed; 
+      bottom: 0;
+      font-weight: bold;
+      align-content: center;
+      align-items: center;
+    }
+
+    hr{
+      border-left: 1px #095C9E;
+      background: #095C9E;
+      width: 100%;
+      height: 1px;
+      position: fixed;
+      bottom: 12px;
+      align-self: center;
+    }
+
+    
     
