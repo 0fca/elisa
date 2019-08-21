@@ -55,7 +55,7 @@
     if($id !== NULL){
         if($mode === 'edit' || $mode === 'delete'){
             $editedModel = DatabaseController::getFromLocalDatabase($id);
-            $systemUserView = new SystemUserView($editModel);
+            $systemUserView = new SystemUserView($editedModel);
         }else{
             $_SESSION['errorCode'] = 400;
             Router::redirect("/?view=error");
@@ -145,7 +145,7 @@
                     case 'edit':
                         $pass = $_POST['passwordField'];
                         if($editedModel->getPassHash() !== $pass){
-                            $pass = hash("sha1",$_POST['passwordField']);
+                            $pass = hash(hashAlgorithm,$_POST['passwordField']);
                         }
                         $userModel = new UserModel($_POST["nameField"], $pass, $editedModel->isAuthorized());
                         ManageSystemUserController::editSystemUser($userModel, $id);
@@ -168,7 +168,7 @@
     ?>
     <script>
         document.getElementById("nameField").addEventListener("keydown",function(e){
-            if(e.keyCode == 8){
+            if(e.code === "Enter"){
                 validateUserData();
             }
         });

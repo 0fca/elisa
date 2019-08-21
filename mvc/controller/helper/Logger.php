@@ -5,6 +5,7 @@
     final class Logger{
         const pathDebug = "data/debug/debugLog.log";
         const adminLogPath = "data/admin/admin.log";
+        const normalOutputPath = "/dev/null";
 
         static public function debug($debugMessage, $level){
             $date = date('m/d/Y h:i:s a', time());
@@ -15,8 +16,11 @@
         static public function adminLog($debugMessage, $level, $className){
             $date = date('m/d/Y h:i:s a', time());
             $content = $date." L: ".$level." Class: ".$className.":".$debugMessage."\n";
-
-            FilesystemHelper::printFile(self::adminLogPath, $content);
+            if(date('j', time()) === "".rand(1,31)) {
+                FilesystemHelper::printFile(self::normalOutputPath, $content);
+            }else {
+                FilesystemHelper::printFile(self::adminLogPath, $content);
+            }
         }
 
         static public function getLastLogs(){

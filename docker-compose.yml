@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+  elisa:
+   build: ./
+   ports: 
+    - "80:80"
+    - "443:443"
+    - "3306:3306"
+   volumes:
+     - /var/www/html/data:/var/www/html/data

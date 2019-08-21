@@ -20,7 +20,6 @@
                 $result["message"] = (self::$systemUserModel->getPassHash() === $password) ? L0 : L100;
                 $result["result"] = self::$systemUserModel->getPassHash() === $password;
                 Logger::adminLog("User authorized successfully:{$username} ",Level::INFORMATION, get_called_class());
-                //$_SESSION["returnUrl"] = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             }
             return $result;
         }

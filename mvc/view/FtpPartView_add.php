@@ -1,4 +1,5 @@
-<div class="content-container"> 
+
+<div class="content-container">
     <?php 
         echo "
         <div class='leftCol1'>
@@ -35,8 +36,7 @@
 		<input type="text" id="quota" name="quota" value="50" required/>
 	</div>
     </div>
-        </div>
-        <span class="internav">
-            <button type="submit" class="actionbutton" id="postData" name="postData">OK</button>
-            <a href="/?view=FtpUserListView" class="button-link">Anuluj</a>
-        </span>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <button type="submit" class="btn btn-primary" name="postData">OK</button>
+    <a href="/?view=FtpUserListView" class="btn btn-link">Anuluj</a>
+</div>

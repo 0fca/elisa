@@ -4,6 +4,9 @@
     define("mailTo","dasi@infinite.pl");
     define("mailFrom","ftp-panel-elisa");
     define("subject","Elisa FTP Panel - critical error");
+    define("configPath","./data/config.popo");
+    define("hashAlgorithm", "sha256");
+    #define("configObject", unserialize(file_get_contents(configPath)));
 
     const dbNames = array(0 => "192.168.216.21;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
                           1 => "192.168.216.22;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
@@ -12,10 +15,5 @@
                           4 => "192.168.216.25;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
                           5 => "192.168.216.10;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
                           6 => "192.168.216.11;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
-                          7 => "192.168.216.12;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
-                          8 => "192.168.216.26;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
-                          9 => "192.168.216.27;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
-                          10 => "192.168.216.28;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
-                          11 => "192.168.216.29;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As",
-                          12 => "192.168.216.30;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As");
+                          7 => "192.168.216.12;Ftp_Infinite_Pl_Proftpd;FtpInfProftpd;Jaw3yEstecU5H8Qep3As");
 ?>

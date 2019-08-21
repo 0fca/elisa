@@ -52,7 +52,7 @@ function validateUserData(){
     for(let i = 0; i < userName.length; i++){
         let c = userName.charCodeAt(i);
         let isSpaceChar = c == ".".charCodeAt(0) || c == "-".charCodeAt(0) || c == "_".charCodeAt(0);
-	if((c < 48 || c > 57) && ( c < 65 || c > 90 ) && (c < 97 || c > 122) && !isSpaceChar){
+        if((c < 48 || c > 57) && ( c < 65 || c > 90 ) && (c < 97 || c > 122) && !isSpaceChar){
             match = false;
             break;
         }

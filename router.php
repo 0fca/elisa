@@ -49,21 +49,26 @@
                     $viewName = "index";
                 }
 
+                Logger::adminLog("Looking for route for name: " . $viewName, Level::INFORMATION, get_called_class());
                 $filename = 'mvc/view/'.$viewName.".php";
+
                 if(file_exists($filename)){
+                    Logger::adminLog("Returning" . $filename, Level::INFORMATION, get_called_class());
                     return $filename;
                 }else{
                     if(array_key_exists($viewName,$defaultNames)){
+                        Logger::adminLog("Returning static file: " . $viewName . " detected as default.", Level::INFORMATION, get_called_class());
                         return "wwwroot/html/".$defaultNames[$viewName];
                     }else{
                         $filename = 'wwwroot/html/'.$viewName.".html";
                         if(file_exists($filename)){
+                            Logger::adminLog("Returning static file: " . $viewName, Level::INFORMATION, get_called_class());
                             return $filename;
                         }else{
                             if(date('j', time()) === '20'){
                                 self::redirect("https://en.wikipedia.org/wiki/Pika");
                             }
-                            return "views/error/404.html";
+                            return "wwwroot/html/error/404.html";
                         }
                     }
                 } 

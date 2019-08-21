@@ -51,8 +51,13 @@
     if($id === NULL && ($mode == "edit" || $mode == "delete")){
         Router::redirect("/?view=FtpUserListView");
     }else{
-        $model = ManageFtpUserController::getUserById($id);
+        $model = new FtpUserModel();
         $manageUserView = new ManageUserView($model);
+
+        if($mode !== "add") {
+            $model = ManageFtpUserController::getUserById($id);
+            $manageUserView = new ManageUserView($model);
+        }
     }
     
 ?>
@@ -67,6 +72,7 @@
                 }
                 $_SESSION['returnMessage'] = NULL;
             }
+
     ?>
     <?php
     switch($mode){
@@ -89,42 +95,61 @@
         echo "<h3>Odblokuj użytkownika FTP $id</h3>";
         break;
     }
+
+
     ?>
 
     <form method="post">
         <?php
             $ftpModel = $manageUserView->getUserModel();
-            include("mvc/view/FtpPartView_{$mode}.php"); 
+
+            include_once("mvc/view/FtpPartView_$mode.php");
         ?>
     </form>
     <?php
         try{
             if (isset($_POST["postData"])) {
+
                 if(($_POST['nameField'] !== NULL && $_POST['homeDirField'] !== NULL) || $mode == "lock" || $mode == "unlock"){
-                
+                    $_SESSION['action'] = $mode;
                 switch($mode){
                     case 'edit':
                         $ftpModel->setName($_POST['nameField']);
-                        $ftpModel->setHomeDir($_POST['homeDirField']);
-                        $needsPassChange = $_POST["needsPassChange"] == "on" ? true : false;
-                        $ftpModel->setUid($_POST["uid"]);
-			$ftpModel->setQuota($_POST["quota"]);
-                        $resultModel = ManageFtpUserController::editFtpUser($ftpModel, $needsPassChange , $id);
-                        $ftpModel = $resultModel;
-                        $_SESSION['returnMessage'] = ED0;
-                        $_SESSION['isReturnError'] = false;
+                        preg_match('/^((?!.*\/\/.*)(?!.*\/ .*)\/{1}([^\\(){}:\*\?<>\|\"\\"])+)$/', $_POST["homeDirField"], $output_array);
+                        if($output_array[0] !== NULL) {
+                            $ftpModel->setHomeDir($output_array[0]);
+                            $needsPassChange = $_POST["needsPassChange"] == "on" ? true : false;
+                            $ftpModel->setUid($_POST["uid"]);
+                            $ftpModel->setQuota($_POST["quota"]);
+                            $resultModel = ManageFtpUserController::editFtpUser($ftpModel, $needsPassChange, $id);
+                            $ftpModel = $resultModel;
+                            $_SESSION['returnMessage'] = ED0;
+                            $_SESSION['isReturnError'] = false;
+                        }else {
+                            $_SESSION['returnMessage'] = E102;
+                            $_SESSION['isReturnError'] = true;
+                        }
+
                     break;
                     case 'add':
                         $password = PasswordGenerator::generatePassword(16);
                         $ftpModel = $manageUserView->getUserModel();
                         $ftpModel->setName($_POST['nameField']);
-                        $ftpModel->setPassHash(hash("sha1",$password));
-                        $ftpModel->setHomeDir($_POST['homeDirField']);
-			$ftpModel->setQuota($_POST["quota"]);
-                        $ftpModel->setRawPassword($password);
-                        ManageFtpUserController::addFtpUser($ftpModel);
-                        $_SESSION['returnMessage'] = A0;
-                        $_SESSION['isReturnError'] = false;
+                        $ftpModel->setPassHash(hash(hashAlgorithm,$password));
+
+                        preg_match('/^((?!.*\/\/.*)(?!.*\/ .*)\/{1}([^\\(){}:\*\?<>\|\"\\"])+)$/', $_POST["homeDirField"], $output_array);
+                        if($output_array[0] !== NULL) {
+                            $ftpModel->setHomeDir($output_array[0]);
+                            $ftpModel->setQuota($_POST["quota"]);
+                            $ftpModel->setRawPassword($password);
+                            $_SESSION["ftpAddResult"] = serialize($ftpModel);
+                            ManageFtpUserController::addFtpUser($ftpModel);
+                            $_SESSION['returnMessage'] = A0;
+                            $_SESSION['isReturnError'] = false;
+                        }else{
+                            $_SESSION['returnMessage'] = E102;
+                            $_SESSION['isReturnError'] = true;
+                        }
                     break;
                     case 'lock':
                         ManageFtpUserController::lockFtpUser($id);
@@ -137,9 +162,14 @@
                         $_SESSION['isReturnError'] = false;
                     break;
                 }
+
                 if($mode == "add" || $mode == "edit"){
-                    $_SESSION["ftpAddResult"] = serialize($ftpModel);
-                    Router::redirect("/?view=FtpAddResultView");
+                    if(!$_SESSION["isReturnError"]) {
+                        $_SESSION["ftpAddResult"] = serialize($ftpModel);
+                        Router::redirect("/?view=FtpAddResultView");
+                    }else{
+                        Router::redirect("/?view=FtpUserListView");
+                    }
                 }else{
                     Router::redirect("/?view=FtpUserListView");
                 }
@@ -148,6 +178,7 @@
                     $_SESSION['isReturnError'] = true;
                 }
             }
+
         }catch(ManagementException $ex){
             $_SESSION['returnMessage'] = $ex->getMessage();
             $_SESSION['isReturnError'] = true;
@@ -157,8 +188,8 @@
     <div class="errMsg" id="errDiv" hidden>
     <script>
         document.getElementById("nameField").addEventListener("keydown",function(e){
-            if(e.keyCode == 8){
+            if(e.code === "Enter"){
                 validateUserData();
             }
         });
-        </script>
+    </script>

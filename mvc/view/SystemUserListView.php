@@ -65,7 +65,6 @@
     if($systemUserModel !== NULL){
         if($systemUserModel->isAuthorized()){
             $userList = DatabaseController::listLocalUsers();
-            //var_dump($userList);
             $systemUserListView = new SystemUserListView($userList);
         }else{
             $_SESSION['errorCode'] = 403;

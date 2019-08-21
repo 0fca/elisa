@@ -6,7 +6,7 @@
         private $uid;
         private $passwd;
         private $rawPass;
-	private $quota;
+	    private $quota;
 
         public function __construct(){
             

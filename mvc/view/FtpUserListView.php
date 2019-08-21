@@ -32,9 +32,9 @@
             }
             $i = 0;
             foreach($this->users as $user){
-                $lockOpt = "<a class='btn btn-primary' href='{$_SERVER['PHP_SELF']}?view=ManageFtpUserView&mode=edit&userid={$user->getName()}'>Edytuj</a>".
+                $lockOpt = "<a class='btn btn-primary mr-4' href='{$_SERVER['PHP_SELF']}?view=ManageFtpUserView&mode=edit&userid={$user->getName()}'>Edytuj</a>".
                            "<a class='btn btn-danger' href='{$_SERVER['PHP_SELF']}?view=ManageFtpUserView&mode=lock&userid={$user->getName()}'>Zablokuj</a>";
-                if($user->getHomeDir() == "***BLOCKED***"){
+                if($user->getHomeDir() == "/sbin/nologin"){
                     $lockOpt = "<a class='btn btn-success' href='{$_SERVER['PHP_SELF']}?view=ManageFtpUserView&mode=unlock&userid={$user->getName()}'>Odblokuj</a>";
                 }
 
@@ -53,7 +53,7 @@
                         "<p>".$user->getGid()."</p>".
                     "</td>".
                     "<td>".
-                        "<p>".$user->getQuota()."</p>".
+                        "<p>".($user->getQuota() !== NULL ? $user->getQuota() : "Ni mo")."</p>".
                     "</td>".
                     "<td>".
                         $lockOpt.
@@ -118,7 +118,7 @@
     <div class="col-14 width-fit">
       <div class="row pb-4">
         <div class="col-12">
-          <h1 class="h2">Lista użytkowników systemowych</h1>
+          <h1 class="h2">Lista użytkowników FTP</h1>
           <a class="btn btn-success" href=<?php echo $_SERVER['PHP_SELF'] . "?view=ManageFtpUserView&mode=add";?>>Dodaj nowego</a>
           <span class="internav">
                 <p style="margin-right: 15px;">Wpisz szukaną frazę:</p>
@@ -153,8 +153,7 @@
 
 <script>
     document.getElementById("searchField").addEventListener("keydown",function(e){
-        if(e.keyCode == 8){
-            console.log(e.keyCode);
+        if(e.code === "Enter"){
             filter();
         }
     });

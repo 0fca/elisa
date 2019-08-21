@@ -2,6 +2,7 @@
 //edit messages
     define("ED0","Edycja zakończona pomyślnie.");
     define("E101","Błąd E101 - Pola nie mogą być puste!");
+    define("E102", "Błąd E102 - Format danych jest niepoprawny.");
 //delete messages
     define("D0","Użytkownik został zablokowany.");
     define("D2", "Użytkownik został odblokownany.");

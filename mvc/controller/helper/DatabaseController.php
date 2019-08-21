@@ -5,6 +5,7 @@
     include_once('mvc/controller/exceptions/DbConnectionFailedException.php');
     include_once('mvc/controller/exceptions/InconsistentDbStateException.php');
     include_once('mvc/controller/helper/FilesystemHelper.php');
+    include_once('mvc/controller/helper/AuthController.php');
     include_once('messages.php');
     include_once('constants.php');
     include_once('mvc/controller/helper/Logger.php');
@@ -25,7 +26,7 @@
             if(!FilesystemHelper::fileExists($userModel->getUserName())){
                 Logger::debug("Adding to local db.",Level::INFORMATION);
                 $dbContent = FilesystemHelper::readFromDbFile();
-                $dbContent .= $userModel->getUserName() . ":" . hash("sha1",serialize($userModel)) . ";";
+                $dbContent .= $userModel->getUserName() . ":" . hash(hashAlgorithm,serialize($userModel)) . ";";
                 Logger::adminLog($dbContent, Level::INFORMATION, get_called_class());
                 FilesystemHelper::printAllToDbFile($dbContent);
                 FilesystemHelper::printUserFile($userModel->getUserName(), serialize($userModel));
@@ -44,6 +45,8 @@
         }
 
         static public function deleteFromLocalDatabase($userName){
+            $user = AuthController::getLoggedInUser();
+            if($user->getName() !== $userName){
             if(FilesystemHelper::fileExists($userName)){
                 $resultContent = self::deleteFromUserHashData($userName);
                 Logger::debug("Result: " . $resultContent, Level::INFORMATION);
@@ -52,12 +55,13 @@
             }else{
                 throw new DbOperationFailedException(DB201);
             }
+            }
         }
 
         static public function editLocalUser($userModel, $oldName){
             if(FilesystemHelper::fileExists($oldName)){
                 $resultContent = self::deleteFromUserHashData($oldName);
-                $resultContent .= $userModel->getUserName() . ":" . hash("sha1",serialize($userModel)) . ";";
+                $resultContent .= $userModel->getUserName() . ":" . hash(hashAlgorithm,serialize($userModel)) . ";";
                 FilesystemHelper::removeFile($oldName);
                 FilesystemHelper::printUserFile($userModel->getUserName(), serialize($userModel));
                 FilesystemHelper::printAllToDbFile($resultContent);
@@ -96,14 +100,14 @@
                         $homeDir = $row[2];
                         $uid = $row[3];
                         $gid = $row[4];
-			$quota = $row[5];
+			            $quota = $row[5];
                         $ftpUserModel = new FtpUserModel();
                         $ftpUserModel->setName($userid);
                         $ftpUserModel->setUid($uid);
                         $ftpUserModel->setGid($gid);
                         $ftpUserModel->setHomeDir($homeDir);
                         $ftpUserModel->setPassHash($passwd);
-			$ftpUserModel->setQuota($quota);
+			            $ftpUserModel->setQuota($quota);
                         $result[$userid] = $ftpUserModel;
                     }
                     $_SESSION["rowCount"] = sizeof($result);
@@ -192,7 +196,6 @@
 
         static public function getFtpUser($id){
             $con = self::connect(0);
-
             if($con !== NULL){
                 $stmt = $con->stmt_init();
                 $sql_statement = "select userid,passwd,homedir,uid,gid,comment from usertable where userid='{$id}'";
@@ -206,25 +209,23 @@
                     $homeDir = $row[2];
                     $uid = $row[3];
                     $gid = $row[4];
-		    $quota = $row[5];
+		            $quota = $row[5];
                     $ftpUserModel = new FtpUserModel();
                     $ftpUserModel->setName($userid);
                     $ftpUserModel->setUid($uid);
                     $ftpUserModel->setGid($gid);
                     $ftpUserModel->setHomeDir($homeDir);
                     $ftpUserModel->setPassHash($passwd);
-		    $ftpUserModel->setQuota($quota);
+		            $ftpUserModel->setQuota($quota);
                     $count = sizeof($row);
                     Logger::adminLog("FTP user({$uid}) statement queried.",Level::INFORMATION, get_called_class());
-                
-                
+
+                self::disconnect($con, $stmt);
                 return $ftpUserModel;
             }else{
                 Logger::adminLog("DB300 thrown",Level::ERROR, get_called_class());
                 throw new DbConnectionFailedException(DB300);
             }
-
-            self::disconnect($con, $stmt);
         }
 
         static public function getRowCount(){
@@ -237,8 +238,9 @@
                 $queryResult = $stmt->get_result();
                 self::$rowCount = $queryResult->fetch_array(MYSQLI_NUM)[0];
                 $_SESSION["rowCount"] = self::$rowCount;
+                self::disconnect($con, $stmt);
             }
-            self::disconnect($con, $stmt);
+
             return self::$rowCount;
         }
 

@@ -13,7 +13,7 @@
                 $loggedIn = self::getLoggedInUser();
                 DatabaseController::editLocalUser($model, $oldName);
                 if($loggedIn->getUserName() === $oldName){
-                    self::updateUserHash(hash("sha1",serialize($model)));
+                    self::updateUserHash(hash(hashAlgorithm,serialize($model)));
                 }
                 Logger::adminLog("Edited local user.", Level::INFORMATION, get_called_class());
             }catch(DbOperationFailedException $ex){
